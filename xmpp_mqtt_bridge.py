@@ -11,13 +11,12 @@ load_dotenv()
 xmpp_jid = os.getenv("XMPP_JID")
 xmpp_pasword = os.getenv("XMPP_PASSWORD")
 xmpp_resource = os.getenv("XMPP_RESOURCE")
+xmpp_receiver = os.getenv("XMPP_RECEIVER")
 
 # MQTT connection
-mqtt_broker = os.getenv("MQTT_BROKER")
-mqtt_port = os.getenv("MQTT_PORT")
+mqtt_broker = os.getenv("MQTT_BROKER", "test.mosquitto.org")
+mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
 mqtt_topic = os.getenv("MQTT_TOPIC")
-# mqtt_broker = "test.mosquitto.org"
-# mqtt_port = 1883
 
 mqtt_client = mqtt.Client(
     mqtt.CallbackAPIVersion.VERSION2, client_id="jeziel_xmpp_bridge"
@@ -52,6 +51,9 @@ def xmpp_to_mqtt(connection, message):
 
     if info.is_published():
         print(f"[MQTT] Publicado em '{mqtt_topic}': {body}")
+        connection.send(
+            xmpp.protocol.Message(to=xmpp_receiver, body="mensagem publicada")
+        )
     else:
         print("[MQTT] A publicacao ainda nao foi confirmada.")
 
@@ -101,6 +103,9 @@ def main():
 
         print("[XMPP] Conectado e autenticado.")
         print("[BRIDGE] Aguardando mensagens do Pidgin...")
+        connection.send(
+            xmpp.protocol.Message(to=xmpp_receiver, body="Conexão bem sucedida")
+        )
 
         while True:
             connection.Process(1)
