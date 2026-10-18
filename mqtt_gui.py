@@ -4,13 +4,12 @@ import paho.mqtt.client as mqtt
 
 from dotenv import load_dotenv
 
-# MQTT connection
-mqtt_broker = os.getenv("MQTT_BROKER")
-mqtt_port = os.getenv("MQTT_PORT")
-mqtt_topic = os.getenv("MQTT_TOPIC")
+load_dotenv()
 
-# mqtt_broker = "test.mosquitto.org"
-# mqtt_port = 1883
+# MQTT connection
+mqtt_broker = os.getenv("MQTT_BROKER", "test.mosquitto.org")
+mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
+mqtt_topic = os.getenv("MQTT_TOPIC")
 
 # Interface grafica
 root = tk.Tk()
